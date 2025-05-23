@@ -101,7 +101,7 @@ The package includes several example scripts to demonstrate its functionality:
 
 Run any example using:
 ```bash
-python -m robot_collision_detection.examples.base_robot_model
+python -m robot_collision_detection.examples.dual_robot_simulation.py
 ```
 
 ## Contributing
