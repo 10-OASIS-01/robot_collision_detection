@@ -189,24 +189,78 @@ Implementation: `dist_segment_segment(seg1_start, seg1_end, seg2_start, seg2_end
 ## 4. Collision Detection Algorithm
 
 The overall collision detection algorithm combines the distance calculations for all combinations of geometric primitives between two robots. It is implemented in the `min_distance_between_robots()` function in the `distance.collision` module.
+Let the geometric models of the two robots be represented as:
+$$R_1 = \{S_1^1, S_1^2, \ldots, S_1^{n_{s1}}\} \cup \{C_1^1, C_1^2, \ldots, C_1^{n_{c1}}\}$$
+$$R_2 = \{S_2^1, S_2^2, \ldots, S_2^{n_{s2}}\} \cup \{C_2^1, C_2^2, \ldots, C_2^{n_{c2}}\}$$
 
-### 4.1 Algorithm Steps
+where $S_i^j$ denotes the $j$-th sphere of the $i$-th robot, and $C_i^j$ denotes the $j$-th capsule of the $i$-th robot.
 
-1. Initialize the minimum distance to infinity
-2. For each geometric primitive (sphere or capsule) in the first robot:
-   a. For each geometric primitive in the second robot:
-      i. Calculate the distance between the two primitives based on their types
-      ii. If the calculated distance is less than the current minimum distance, update the minimum distance and record the collision type and elements involved
-3. Return the minimum distance, collision type, and collision elements
+Let $d_{SS}$, $d_{SC}$, and $d_{CC}$ be the distance calculation functions for sphere-sphere, sphere-capsule, and capsule-capsule pairs as defined in Section 3.
 
-A collision is detected when the minimum distance is less than zero.
+The collision detection algorithm can be formally described as:
 
-### 4.2 Time Complexity Analysis
+**Algorithm**: Minimum Distance Calculation Between Robots  
+**Input**: Two robot geometric models $R_1$ and $R_2$  
+**Output**: Minimum distance $d_{min}$, collision type $\tau$, collision elements $\varepsilon$
 
-Let's analyze the computational complexity of our collision detection algorithm:
-- If Robot 1 has $m$ primitives and Robot 2 has $n$ primitives, the algorithm has O(mn) complexity in terms of distance calculations
-- The most expensive operation is the capsule-to-capsule distance calculation, which requires calculating the minimum distance between two line segments in 3D space
-- The entire algorithm is significantly more efficient than methods using finer discretization or more complex geometric representations
+**Steps**:
+1. Initialize $d_{min} \leftarrow +\infty$, $\tau \leftarrow \emptyset$, $\varepsilon \leftarrow \emptyset$
+
+2. **Sphere-to-Sphere Distance Calculation**:
+   $$\forall (S_1^i, S_2^j) \in R_1.spheres \times R_2.spheres:$$
+   
+   Compute $d \leftarrow d_{SS}(S_1^i, S_2^j)$
+   
+   If $d < d_{min}$, then:
+   $$d_{min} \leftarrow d$$
+   $$\tau \leftarrow \text{"sphere-sphere"}$$
+   $$\varepsilon \leftarrow \{R_1.name\text{-}S^i, R_2.name\text{-}S^j\}$$
+
+3. **Sphere-to-Capsule Distance Calculation**:
+   $$\forall (S_1^i, C_2^j) \in R_1.spheres \times R_2.capsules:$$
+   
+   Compute $d \leftarrow d_{SC}(S_1^i, C_2^j)$
+   
+   If $d < d_{min}$, then:
+   $$d_{min} \leftarrow d$$
+   $$\tau \leftarrow \text{"sphere-capsule"}$$
+   $$\varepsilon \leftarrow \{R_1.name\text{-}S^i, R_2.name\text{-}C^j\}$$
+
+4. **Capsule-to-Sphere Distance Calculation**:
+   $$\forall (C_1^i, S_2^j) \in R_1.capsules \times R_2.spheres:$$
+   
+   Compute $d \leftarrow d_{SC}(S_2^j, C_1^i)$
+   
+   If $d < d_{min}$, then:
+   $$d_{min} \leftarrow d$$
+   $$\tau \leftarrow \text{"capsule-sphere"}$$
+   $$\varepsilon \leftarrow \{R_1.name\text{-}C^i, R_2.name\text{-}S^j\}$$
+
+5. **Capsule-to-Capsule Distance Calculation**:
+   $$\forall (C_1^i, C_2^j) \in R_1.capsules \times R_2.capsules:$$
+   
+   Compute $d \leftarrow d_{CC}(C_1^i, C_2^j)$
+   
+   If $d < d_{min}$, then:
+   $$d_{min} \leftarrow d$$
+   $$\tau \leftarrow \text{"capsule-capsule"}$$
+   $$\varepsilon \leftarrow \{R_1.name\text{-}C^i, R_2.name\text{-}C^j\}$$
+
+6. Return $(d_{min}, \tau, \varepsilon)$
+
+A collision is detected when the minimum distance $d_{min} < 0$.
+
+**Time Complexity Analysis**:
+robot, and $n_2 = n_{s2} + n_{c2}$ for the second robot. The algorithm performs pairwise distance calculations between all primitives, resulting in the following complexity breakdown:
+
+- **Sphere-to-sphere detection**: $O(n_{s1} \cdot n_{s2})$
+- **Sphere-to-capsule detection**: $O(n_{s1} \cdot n_{c2} + n_{s2} \cdot n_{c1})$
+- **Capsule-to-capsule detection**: $O(n_{c1} \cdot n_{c2})$
+
+The overall time complexity is $O(n_1 \cdot n_2)$. If Robot 1 has $m$ primitives and Robot 2 has $n$ primitives, the algorithm has $O(mn)$ complexity in terms of distance calculations.
+
+The most expensive operation is the capsule-to-capsule distance calculation, which requires calculating the minimum distance between two line segments in 3D space. Despite this, the entire algorithm is significantly more efficient than methods using finer discretization or more complex geometric representations, making it suitable for real-time applications.
+
 
 ## 5. Forward Kinematics and Model Update
 
