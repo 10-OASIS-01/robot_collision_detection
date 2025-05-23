@@ -6,7 +6,16 @@
 
 A Python package for real-time collision detection between industrial robots using simplified geometric models based on spheres and capsules.
 
-<p align="center"> <img src="images/collision_visualization.png" alt="Dual robot collision simulation" width="800"/> <br> <em>Figure: Dual robot collision simulation showing minimum distance over time (left) and robot configuration at collision point (right)</em> </p>
+
+<table>
+  <tr>
+    <td><img src="images/collision_visualization.png" alt="Dual robot collision simulation" width="1000"/></td>
+  </tr>
+  <tr>
+    <td><i>Dual robot collision simulation showing minimum distance over time (left) and robot configuration at collision point (right)</i></td>
+  </tr>
+</table>
+
 
 ## Features
 
@@ -22,11 +31,15 @@ A Python package for real-time collision detection between industrial robots usi
 - Support for custom robot geometric models with varying levels of detail
 - Performance comparison tools for different modeling approaches
 
-<p align="center">
-  <img src="images/custom_robot_models.png" alt="Custom robot geometric models with varying levels of detail" width="800"/>
-  <br>
-  <em>Figure: Custom robot geometric models with varying levels of detail: standard model (left), precise model (middle), and simplified model (right)</em>
-</p>
+
+<table>
+  <tr>
+    <td><img src="images/custom_robot_models.png" alt="Custom robot geometric models with varying levels of detail" width="1000"/></td>
+  </tr>
+  <tr>
+    <td><i>Custom robot geometric models with varying levels of detail: standard model (left), precise model (middle), and simplified model (right)</i></td>
+  </tr>
+</table>
 
 ## Package Structure
 
@@ -49,6 +62,8 @@ robot_collision_detection/
 
 ## Algorithm
 
+**For a detailed explanation of the mathematical foundations, refer to the [Algorithm Tutorial](algorithm_tutorial.md).**
+
 The collision detection algorithm is based on calculating the minimum distance between simplified geometric models of robots:
 
 1. Each robot is represented as a collection of spheres and capsules
@@ -57,13 +72,15 @@ The collision detection algorithm is based on calculating the minimum distance b
 4. The minimum distance between the robots is the minimum of all calculated distances
 5. A negative minimum distance indicates collision
 
-<p align="center">
-  <img src="images/distance_calculations.png" alt="Distance calculations between geometric primitives" width="800"/>
-  <br>
-  <em>Figure: Distance calculations between different geometric primitives: sphere-sphere (left), sphere-capsule (middle), and capsule-capsule (right)</em>
-</p>
+<table>
+  <tr>
+    <td><img src="images/distance_calculations.png" alt="Distance calculations between geometric primitives" width="1000"/></td>
+  </tr>
+  <tr>
+    <td><i>Distance calculations between different geometric primitives: sphere-sphere (left), sphere-capsule (middle), and capsule-capsule (right)</i></td>
+  </tr>
+</table>
 
-For a detailed explanation of the mathematical foundations, refer to the [Algorithm Tutorial](algorithm_tutorial.md).
 
 ## Installation
 
