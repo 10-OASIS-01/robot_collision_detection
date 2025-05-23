@@ -60,7 +60,7 @@ For our standard 6R robot model, we have:
 
 <table>
   <tr>
-    <td><img src="custom_robot_models.png" alt="Custom robot geometric models with varying levels of detail" width="800"/></td>
+    <td><img src="images/custom_robot_models.png" alt="Custom robot geometric models with varying levels of detail" width="800"/></td>
   </tr>
   <tr>
     <td><i>Figure 2.1: Custom robot geometric models with varying levels of detail: standard model (left), precise model (middle), and simplified model (right)</i></td>
@@ -84,7 +84,7 @@ The core of our collision detection algorithm involves calculating the minimum d
 
 <table>
   <tr>
-    <td><img src="distance_calculations.png" alt="Distance calculations between geometric primitives" width="800"/></td>
+    <td><img src="images/distance_calculations.png" alt="Distance calculations between geometric primitives" width="800"/></td>
   </tr>
   <tr>
     <td><i>Figure 3.1: Distance calculations between different geometric primitives: sphere-sphere (left), sphere-capsule (middle), and capsule-capsule (right)</i></td>

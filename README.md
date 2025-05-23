@@ -6,7 +6,7 @@
 
 A Python package for real-time collision detection between industrial robots using simplified geometric models based on spheres and capsules.
 
-<p align="center"> <img src="docs/collision_visualization.png" alt="Dual robot collision simulation" width="800"/> <br> <em>Figure: Dual robot collision simulation showing minimum distance over time (left) and robot configuration at collision point (right)</em> </p>
+<p align="center"> <img src="images/collision_visualization.png" alt="Dual robot collision simulation" width="800"/> <br> <em>Figure: Dual robot collision simulation showing minimum distance over time (left) and robot configuration at collision point (right)</em> </p>
 
 ## Features
 
@@ -23,7 +23,7 @@ A Python package for real-time collision detection between industrial robots usi
 - Performance comparison tools for different modeling approaches
 
 <p align="center">
-  <img src="docs/custom_robot_models.png" alt="Custom robot geometric models with varying levels of detail" width="800"/>
+  <img src="images/custom_robot_models.png" alt="Custom robot geometric models with varying levels of detail" width="800"/>
   <br>
   <em>Figure: Custom robot geometric models with varying levels of detail: standard model (left), precise model (middle), and simplified model (right)</em>
 </p>
@@ -58,12 +58,12 @@ The collision detection algorithm is based on calculating the minimum distance b
 5. A negative minimum distance indicates collision
 
 <p align="center">
-  <img src="docs/distance_calculations.png" alt="Distance calculations between geometric primitives" width="800"/>
+  <img src="images/distance_calculations.png" alt="Distance calculations between geometric primitives" width="800"/>
   <br>
   <em>Figure: Distance calculations between different geometric primitives: sphere-sphere (left), sphere-capsule (middle), and capsule-capsule (right)</em>
 </p>
 
-For a detailed explanation of the mathematical foundations, refer to the [Algorithm Tutorial](docs/algorithm_tutorial.md).
+For a detailed explanation of the mathematical foundations, refer to the [Algorithm Tutorial](algorithm_tutorial.md).
 
 ## Installation
 
