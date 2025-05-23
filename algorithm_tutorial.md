@@ -255,7 +255,7 @@ The collision detection algorithm can be formally described as:
 A collision is detected when the minimum distance $d_{min} < 0$.
 
 **Time Complexity Analysis**:
-robot, and $n_2 = n_{s2} + n_{c2}$ for the second robot. The algorithm performs pairwise distance calculations between all primitives, resulting in the following complexity breakdown:
+Let $n_1 = n_{s1} + n_{c1}$ for the first robot, and $n_2 = n_{s2} + n_{c2}$ for the second robot. The algorithm performs pairwise distance calculations between all primitives, resulting in the following complexity breakdown:
 
 - **Sphere-to-sphere detection**: $O(n_{s1} \cdot n_{s2})$
 - **Sphere-to-capsule detection**: $O(n_{s1} \cdot n_{c2} + n_{s2} \cdot n_{c1})$
