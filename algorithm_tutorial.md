@@ -168,7 +168,11 @@ Two cases arise:
 
 1. **Interior Solution**: If the minimum of $F(s,t)$ is achieved at an interior point of the domain. Setting the gradient of $F(s,t)$ to zero:
    
-   $$\nabla F(s,t) = \begin{bmatrix} 2as + 2bt + 2d \\ 2bs + 2ct + 2e \end{bmatrix} = \begin{bmatrix} 0 \\ 0 \end{bmatrix}$$ 
+$$
+\begin{aligned}
+\nabla F(s,t) &= \begin{pmatrix} 2as + 2bt + 2d \\ 2bs + 2ct + 2e \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix} \\
+\end{aligned}
+$$
 
    This gives:
    $$s_c = \frac{be - cd}{ac - b^2}$$
