@@ -1,6 +1,7 @@
 from .core.robot import Robot
 from .core.kinematics import dh_transform
 from .core.urdf_loader import URDFRobot
+from .core.ik_solver import inverse_kinematics, inverse_kinematics_collision_free, IKResult
 from .distance.primitives import (
     dist_point_segment, 
     dist_sphere_sphere, 
