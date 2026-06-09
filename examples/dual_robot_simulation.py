@@ -3,16 +3,13 @@ Dual robot collision simulation example for the robot_collision_detection packag
 
 This example simulates two robots moving along predefined paths and
 detects if and when they collide with each other.
+
+Run after installing the package: pip install -e .
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-import sys
-import os
-
-# Add the parent directory to the Python path for imports from the package
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from robot_collision_detection import (
     Robot,

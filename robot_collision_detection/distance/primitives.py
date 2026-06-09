@@ -1,17 +1,28 @@
 import numpy as np
 
+
+def _to_3d(arr, name="array"):
+    arr = np.asarray(arr, dtype=float)
+    if arr.shape != (3,):
+        raise ValueError(f"{name} must be a 3D vector, got shape {arr.shape}")
+    return arr
+
+
 def dist_point_segment(p, seg_start, seg_end):
     """
     Calculate the shortest distance from a point to a line segment.
-    
+
     Args:
         p: Point coordinates as a numpy array
         seg_start: Start point of the line segment as a numpy array
         seg_end: End point of the line segment as a numpy array
-    
+
     Returns:
         Shortest distance from the point to the line segment
     """
+    p = _to_3d(p, "p")
+    seg_start = _to_3d(seg_start, "seg_start")
+    seg_end = _to_3d(seg_end, "seg_end")
     v = seg_end - seg_start
     w = p - seg_start
     
@@ -40,8 +51,8 @@ def dist_sphere_sphere(s1, s2):
     """
     center1, r1 = s1
     center2, r2 = s2
-    
-    dist = np.linalg.norm(np.array(center1) - np.array(center2))
+
+    dist = np.linalg.norm(_to_3d(center1, "center1") - _to_3d(center2, "center2"))
     return dist - r1 - r2
 
 def dist_sphere_capsule(sphere, capsule):
@@ -57,74 +68,58 @@ def dist_sphere_capsule(sphere, capsule):
     """
     center, r_sphere = sphere
     seg_start, seg_end, r_capsule = capsule
-    
-    # Calculate the distance from the sphere center to the capsule's centerline segment
-    dist = dist_point_segment(np.array(center), np.array(seg_start), np.array(seg_end))
+
+    dist = dist_point_segment(_to_3d(center, "center"), _to_3d(seg_start, "seg_start"), _to_3d(seg_end, "seg_end"))
     return dist - r_sphere - r_capsule
 
 def dist_segment_segment(seg1_start, seg1_end, seg2_start, seg2_end):
     """
     Calculate the shortest distance between two line segments.
-    
+
     Args:
         seg1_start: Start point of the first line segment
         seg1_end: End point of the first line segment
         seg2_start: Start point of the second line segment
         seg2_end: End point of the second line segment
-    
+
     Returns:
         Shortest distance between the line segments
     """
-    u = seg1_end - seg1_start  # Direction vector of the first line segment
-    v = seg2_end - seg2_start  # Direction vector of the second line segment
-    w = seg1_start - seg2_start  # Vector connecting the start points of the two line segments
-    
-    a = np.dot(u, u)  # 'a' in the paper
-    b = np.dot(u, v)  # 'b' in the paper
-    c = np.dot(v, v)  # 'c' in the paper
-    d = np.dot(u, w)  # 'd' in the paper
-    e = np.dot(v, w)  # 'e' in the paper
-    f = np.dot(w, w)  # 'f' in the paper
-    
-    # Calculate the denominator
-    denom = a*c - b*b
-    
-    # Initialize parameters
-    sc = 0.0
-    tc = 0.0
-    
-    if denom < 1e-8:  # Parallel or almost parallel case
-        # Set sc to an arbitrary value, e.g., 0
+    u = seg1_end - seg1_start
+    v = seg2_end - seg2_start
+    w = seg1_start - seg2_start
+
+    a = np.dot(u, u)
+    b = np.dot(u, v)
+    c = np.dot(v, v)
+    d = np.dot(u, w)
+    e = np.dot(v, w)
+
+    # Handle degenerate segments (zero length)
+    if a < 1e-12 and c < 1e-12:
+        return np.linalg.norm(seg1_start - seg2_start)
+    if a < 1e-12:
+        return dist_point_segment(seg1_start, seg2_start, seg2_end)
+    if c < 1e-12:
+        return dist_point_segment(seg2_start, seg1_start, seg1_end)
+
+    denom = a * c - b * b
+
+    if denom < 1e-8:
         sc = 0.0
-        # Calculate tc to minimize distance
-        if b > c:  # Use point-to-segment distance
-            tc = d/b
-        else:
-            tc = e/c
+        tc = np.clip(e / c, 0.0, 1.0)
     else:
-        # Calculate sc and tc
-        sc = (b*e - c*d) / denom
-        tc = (a*e - b*d) / denom
-    
-    # Ensure sc and tc are within [0,1] range
-    if sc < 0.0:
-        sc = 0.0
-        tc = e/c if e/c >= 0 and e/c <= 1 else (0.0 if e/c < 0 else 1.0)
-    elif sc > 1.0:
-        sc = 1.0
-        tc = (e+b)/c if (e+b)/c >= 0 and (e+b)/c <= 1 else (0.0 if (e+b)/c < 0 else 1.0)
-    
-    if tc < 0.0:
-        tc = 0.0
-        sc = -d/a if -d/a >= 0 and -d/a <= 1 else (0.0 if -d/a < 0 else 1.0)
-    elif tc > 1.0:
-        tc = 1.0
-        sc = (b-d)/a if (b-d)/a >= 0 and (b-d)/a <= 1 else (0.0 if (b-d)/a < 0 else 1.0)
-    
-    # Calculate the closest points
+        sc = (b * e - c * d) / denom
+        tc = (a * e - b * d) / denom
+
+    # Two-pass clamping to ensure both parameters are optimal within [0,1]
+    sc = np.clip(sc, 0.0, 1.0)
+    tc = np.clip((e + b * sc) / c, 0.0, 1.0)
+    sc = np.clip((-d + b * tc) / a, 0.0, 1.0)
+
     closest1 = seg1_start + sc * u
     closest2 = seg2_start + tc * v
-    
+
     return np.linalg.norm(closest1 - closest2)
 
 def dist_capsule_capsule(c1, c2):
@@ -140,11 +135,53 @@ def dist_capsule_capsule(c1, c2):
     """
     seg1_start, seg1_end, r1 = c1
     seg2_start, seg2_end, r2 = c2
-    
-    # Calculate the distance between the line segments
+
     dist = dist_segment_segment(
-        np.array(seg1_start), np.array(seg1_end), 
-        np.array(seg2_start), np.array(seg2_end)
+        _to_3d(seg1_start, "seg1_start"), _to_3d(seg1_end, "seg1_end"),
+        _to_3d(seg2_start, "seg2_start"), _to_3d(seg2_end, "seg2_end"),
     )
-    
+
     return dist - r1 - r2
+
+
+# --- Fast-path functions (skip input validation, for internal use) ---
+
+def _dist_point_segment_fast(p, seg_start, seg_end):
+    v = seg_end - seg_start
+    w = p - seg_start
+    c1 = np.dot(w, v)
+    if c1 <= 0:
+        return np.linalg.norm(p - seg_start)
+    c2 = np.dot(v, v)
+    if c2 <= c1:
+        return np.linalg.norm(p - seg_end)
+    b = c1 / c2
+    return np.linalg.norm(p - (seg_start + b * v))
+
+
+def _dist_segment_segment_fast(seg1_start, seg1_end, seg2_start, seg2_end):
+    u = seg1_end - seg1_start
+    v = seg2_end - seg2_start
+    w = seg1_start - seg2_start
+    a = np.dot(u, u)
+    b = np.dot(u, v)
+    c = np.dot(v, v)
+    d = np.dot(u, w)
+    e = np.dot(v, w)
+    if a < 1e-12 and c < 1e-12:
+        return np.linalg.norm(seg1_start - seg2_start)
+    if a < 1e-12:
+        return _dist_point_segment_fast(seg1_start, seg2_start, seg2_end)
+    if c < 1e-12:
+        return _dist_point_segment_fast(seg2_start, seg1_start, seg1_end)
+    denom = a * c - b * b
+    if denom < 1e-8:
+        sc = 0.0
+        tc = np.clip(e / c, 0.0, 1.0)
+    else:
+        sc = (b * e - c * d) / denom
+        tc = (a * e - b * d) / denom
+    sc = np.clip(sc, 0.0, 1.0)
+    tc = np.clip((e + b * sc) / c, 0.0, 1.0)
+    sc = np.clip((-d + b * tc) / a, 0.0, 1.0)
+    return np.linalg.norm((seg1_start + sc * u) - (seg2_start + tc * v))

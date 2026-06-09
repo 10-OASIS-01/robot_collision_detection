@@ -62,27 +62,24 @@ class Robot:
     def update_geometric_model(self, transforms):
         """
         Update the position of the geometric model based on joint positions.
-        
+
         Args:
             transforms: List of 4x4 transformation matrices from forward_kinematics
         """
-        # Update sphere positions
-        sphere_centers = [
-            transforms[0][:3, 3],  # S1 at base
-            transforms[1][:3, 3],  # S2 at joint 1
-            transforms[2][:3, 3],  # S3 at joint 2
-            transforms[3][:3, 3]   # S4 at joint 3
-        ]
-        
-        for i, center in enumerate(sphere_centers):
-            self.spheres[i][0] = center
-        
-        # Update capsule positions
-        self.capsules[0][0] = transforms[0][:3, 3]  # C1 start
-        self.capsules[0][1] = transforms[1][:3, 3]  # C1 end
-        
-        self.capsules[1][0] = transforms[1][:3, 3]  # C2 start
-        self.capsules[1][1] = transforms[2][:3, 3]  # C2 end
-        
-        self.capsules[2][0] = transforms[2][:3, 3]  # C3 start
-        self.capsules[2][1] = transforms[3][:3, 3]  # C3 end
+        if len(transforms) < len(self.spheres):
+            raise ValueError(
+                f"Need at least {len(self.spheres)} transforms for {len(self.spheres)} spheres, "
+                f"got {len(transforms)}"
+            )
+        if len(transforms) - 1 < len(self.capsules):
+            raise ValueError(
+                f"Need at least {len(self.capsules) + 1} transforms for {len(self.capsules)} capsules, "
+                f"got {len(transforms)}"
+            )
+
+        for i in range(len(self.spheres)):
+            self.spheres[i][0] = transforms[i][:3, 3]
+
+        for j in range(len(self.capsules)):
+            self.capsules[j][0] = transforms[j][:3, 3]
+            self.capsules[j][1] = transforms[j + 1][:3, 3]

@@ -3,16 +3,13 @@ Distance calculation example for the robot_collision_detection package.
 
 This example demonstrates how to calculate distances between different geometric
 primitives (spheres and capsules) using the provided functions.
+
+Run after installing the package: pip install -e .
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-import sys
-import os
-
-# Add the parent directory to the Python path for imports from the package
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from robot_collision_detection.distance.primitives import (
     dist_sphere_sphere,

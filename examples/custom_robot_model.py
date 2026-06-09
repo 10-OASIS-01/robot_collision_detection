@@ -3,17 +3,14 @@ Custom robot model example for the robot_collision_detection package.
 
 This example demonstrates how to define a custom robot geometric model by
 subclassing the Robot class and overriding the init_geometric_model method.
+
+Run after installing the package: pip install -e .
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-import sys
-import os
 import time
-
-# Add the parent directory to the Python path for imports from the package
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from robot_collision_detection import (
     Robot,
@@ -109,49 +106,49 @@ class CustomRobot(Robot):
         if self.robot_type == "precise":
             # Update spheres for the precise model
             sphere_centers = [
-                transforms[0][:3, 3],                          # S1: Base
-                transforms[0][:3, 3] + np.array([0, 0, 550]),  # S1.5: Mid-base
-                transforms[1][:3, 3],                          # S2: Joint 1
-                transforms[1][:3, 3] + np.array([300, 0, 0]),  # S2.5: Mid-arm1
-                transforms[2][:3, 3],                          # S3: Joint 2
-                transforms[2][:3, 3] + np.array([400, 0, 0]),  # S3.5: Mid-arm2
-                transforms[3][:3, 3],                          # S4: Joint 3
-                transforms[3][:3, 3] + np.array([600, 0, 0])   # S5: End effector
+                transforms[0][:3, 3],                                              # S1: Base
+                transforms[0][:3, 3] + transforms[0][:3, :3] @ np.array([0, 0, 550]),  # S1.5: Mid-base
+                transforms[1][:3, 3],                                              # S2: Joint 1
+                transforms[1][:3, 3] + transforms[1][:3, :3] @ np.array([300, 0, 0]),  # S2.5: Mid-arm1
+                transforms[2][:3, 3],                                              # S3: Joint 2
+                transforms[2][:3, 3] + transforms[2][:3, :3] @ np.array([400, 0, 0]),  # S3.5: Mid-arm2
+                transforms[3][:3, 3],                                              # S4: Joint 3
+                transforms[3][:3, 3] + transforms[3][:3, :3] @ np.array([600, 0, 0])   # S5: End effector
             ]
-            
+
             for i, center in enumerate(sphere_centers):
                 self.spheres[i][0] = center
-            
+
             # Update capsules
             self.capsules[0][0] = transforms[0][:3, 3]  # C1 start
             self.capsules[0][1] = transforms[1][:3, 3]  # C1 end
-            
+
             self.capsules[1][0] = transforms[1][:3, 3]  # C2 start
             self.capsules[1][1] = transforms[2][:3, 3]  # C2 end
-            
+
             self.capsules[2][0] = transforms[2][:3, 3]  # C3 start
             self.capsules[2][1] = transforms[3][:3, 3]  # C3 end
-            
+
             self.capsules[3][0] = transforms[3][:3, 3]  # C4 start
-            self.capsules[3][1] = transforms[3][:3, 3] + np.array([600, 0, 0])  # C4 end
-        
+            self.capsules[3][1] = transforms[3][:3, 3] + transforms[3][:3, :3] @ np.array([600, 0, 0])  # C4 end
+
         elif self.robot_type == "simplified":
             # Update spheres for the simplified model
             sphere_centers = [
-                transforms[0][:3, 3],                          # S1: Base
-                transforms[2][:3, 3],                          # S2: Middle joint
-                transforms[3][:3, 3] + np.array([600, 0, 0])   # S3: End effector
+                transforms[0][:3, 3],                                              # S1: Base
+                transforms[2][:3, 3],                                              # S2: Middle joint
+                transforms[3][:3, 3] + transforms[3][:3, :3] @ np.array([600, 0, 0])   # S3: End effector
             ]
-            
+
             for i, center in enumerate(sphere_centers):
                 self.spheres[i][0] = center
-            
+
             # Update capsules
             self.capsules[0][0] = transforms[0][:3, 3]  # C1 start
             self.capsules[0][1] = transforms[2][:3, 3]  # C1 end
-            
+
             self.capsules[1][0] = transforms[2][:3, 3]  # C2 start
-            self.capsules[1][1] = transforms[3][:3, 3] + np.array([600, 0, 0])  # C2 end
+            self.capsules[1][1] = transforms[3][:3, 3] + transforms[3][:3, :3] @ np.array([600, 0, 0])  # C2 end
         
         else:  # "standard"
             # Use the standard update method for the default model

@@ -7,16 +7,13 @@ This example demonstrates the basic usage of the Robot class, showing how to:
 - Update the geometric models based on joint configurations
 - Calculate the minimum distance between two robots
 - Visualize the robots in 3D space
+
+Run after installing the package: pip install -e .
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-import sys
-import os
-
-# Add the parent directory to the Python path for imports from the package
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from robot_collision_detection import (
     Robot, 
